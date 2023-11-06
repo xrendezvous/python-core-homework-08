@@ -3,36 +3,22 @@ from datetime import date, datetime, timedelta
 
 def get_birthdays_per_week(users):
     now = datetime.today().date()
-    current_week_day = now.weekday()
-    if current_week_day >= 5:
-        start_date = now - timedelta(days=(7 - current_week_day))
-    elif current_week_day == 0:
-        start_date = now - timedelta(days=2)
-    else:
-        start_date = now
-    days_ahead = 4 - current_week_day
-    if days_ahead < 0:
-        days_ahead += 7
-    end_date = now + timedelta(days=days_ahead)
+    end_of_week = now + timedelta(days=(4 - now.weekday() + 7) % 7)
+    weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    result = {day: [] for day in weekdays}
 
-    result = []
     for user in users:
-        birthday = user.get('birthday').replace(year=now.year)
-        if start_date <= birthday <= end_date:
-            result.append(user)
+        user_birthday = user.get('birthday').replace(year=now.year).date()
+        if now <= user_birthday <= end_of_week:
+            day_name = weekdays[user_birthday.weekday()]
+            user_name = user.get('name').split()[0]
+            result[day_name].append(user_name)
+        elif user_birthday.year > now.year and user_birthday <= end_of_week:
+            day_name = weekdays[user_birthday.weekday()]
+            user_name = user.get('name').split()[0]
+            result[day_name].append(user_name)
 
-    weekday = None
-    for user in sorted(result, key=lambda x: x['birthday'].replace(year=now.year)):
-        user_birthday = user.get('birthday').replace(year=now.year).weekday()
-
-        # try:
-        #
-        # except IndexError:
-        if weekday != user_birthday:
-            weekday = user_birthday
-            print(weekday)
-        print(user.get('name'))
-    return users
+    return result
 
 
 if __name__ == "__main__":
