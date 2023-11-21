@@ -12,10 +12,7 @@ def get_birthdays_per_week(users):
         birthday_year = birthday.year
 
         if birthday_year < current_year:
-            if birthday.month <= today.month and birthday.day <= today.day:
-                continue
-            else:
-                next_birthday = birthday.replace(year=current_year)
+            next_birthday = birthday.replace(year=current_year + 1)
         else:
             next_birthday = birthday.replace(year=current_year)
 
@@ -26,6 +23,9 @@ def get_birthdays_per_week(users):
 
         next_birthday_weekday = (today + timedelta(days_to_birthday)).weekday()
         weekday_name = calendar.day_name[next_birthday_weekday]
+
+        if next_birthday_weekday in [5, 6]:
+            next_birthday += timedelta(days=(7 - next_birthday_weekday) + 1)
 
         if weekday_name not in birthdays_per_week:
             birthdays_per_week[weekday_name] = []
