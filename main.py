@@ -5,31 +5,31 @@ import calendar
 def get_birthdays_per_week(users):
     today = date.today()
     current_year = today.year
-
     birthdays_per_week = {}
     for user in users:
         birthday = user["birthday"]
         birthday_year = birthday.year
 
         if birthday_year < current_year:
-            next_birthday = birthday.replace(year=current_year + 1)
-        else:
             next_birthday = birthday.replace(year=current_year)
+        else:
+            next_birthday = birthday
+
+        if next_birthday < today:
+            next_birthday = birthday.replace(year=current_year + 1)
 
         days_to_birthday = (next_birthday - today).days
-
-        if days_to_birthday < 0:
+        if days_to_birthday < 0 or days_to_birthday > 7:
             continue
 
         next_birthday_weekday = (today + timedelta(days_to_birthday)).weekday()
-        weekday_name = calendar.day_name[next_birthday_weekday]
-
         if next_birthday_weekday in [5, 6]:
-            next_birthday += timedelta(days=(7 - next_birthday_weekday) + 1)
+            weekday_name = 'Monday'
+        else:
+            weekday_name = calendar.day_name[next_birthday_weekday]
 
         if weekday_name not in birthdays_per_week:
             birthdays_per_week[weekday_name] = []
-
         birthdays_per_week[weekday_name].append(user["name"])
 
     return birthdays_per_week
@@ -50,6 +50,5 @@ if __name__ == "__main__":
 
     result = get_birthdays_per_week(users)
     print(result)
-    # Виводимо результат
     for day_name, names in result.items():
         print(f"{day_name}: {', '.join(names)}")
