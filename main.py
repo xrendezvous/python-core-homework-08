@@ -1,5 +1,6 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import calendar
+
 
 def get_birthdays_per_week(users):
     today = date.today()
@@ -36,6 +37,7 @@ def get_birthdays_per_week(users):
 
 if __name__ == "__main__":
     users = [
+        {"name": "Bill Gates", "birthday": datetime(1955, 10, 28).date()},
         {"name": "Masha", "birthday": date(2023, 11, 9)},
         {"name": "Olya", "birthday": date(2023, 11, 3)},
         {"name": "Kolya", "birthday": date(2023, 11, 4)},
